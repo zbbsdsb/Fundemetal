@@ -1,0 +1,39 @@
+# Fundemetal — ignore tooling scratch and build artifacts
+
+# --- Tooling / agent scratch ---
+.trae/
+.workbuddy/
+.uploads/
+.cache/
+.tmp/
+node_modules/
+*.mp4
+.thumbnails/
+.hyperframes/
+
+# --- Python (scripts, validators, virtualenvs) ---
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+env/
+ENV/
+
+# --- Editor / IDE ---
+.vscode/
+.idea/
+*.swp
+*~
+
+# --- Logs ---
+*.log
+
+# --- Build output (kept out unless intentionally published) ---
+dist/
+build/
+
+# --- OS ---
+.DS_Store
+Thumbs.db

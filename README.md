@@ -4,7 +4,7 @@
 
 > Built for thinking itself.
 
-![Fundemetal](og-cover.png)
+![Fundemetal](docs/og-cover.png)
 
 ## What it is
 
@@ -18,7 +18,7 @@ Fundemetal is a small, curated collection of **cognitive protocols** — plain M
 | 02 | **Tension Mining** | Find the force in the system — mine irreducible tensions → cross-domain invariants → mechanisms. |
 | 03 | **Great Expectations** | Anti-consensus, anti-template planning with BANI + integrity gates. |
 
-Each skill lives in [`Prepare/`](Prepare/).
+Each skill lives in [`skills/`](skills/).
 
 ## Shared DNA
 
@@ -33,7 +33,7 @@ Six hard constraints every skill obeys:
 
 ## Use a skill
 
-Copy a skill folder (e.g. `Prepare/Decomposer Skill/`) into your agent's skills directory, or paste its `SKILL.md` into your system prompt. No dependencies, no build.
+Copy a skill folder (e.g. `skills/decomposer/`) into your agent's skills directory, or paste its `SKILL.md` into your system prompt. No dependencies, no build.
 
 ```markdown
 # In your agent, reference the protocol:
