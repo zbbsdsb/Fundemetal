@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>DECOMPOSER DEMO: The Protocol Applied to Build the Next TikTok</title>
+<meta name="description" content="A full worked example of the Decomposer Protocol applied to building a short-video platform.">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --white: #FFFFFF;
+    --black: #000000;
+    --gray-50: #666666;
+    --gray-20: #CCCCCC;
+    --gray-10: #E5E5E5;
+    --gray-5: #F5F5F5;
+    --font: 'Helvetica Neue', 'Helvetica', 'Arial', sans-serif;
+    --mono: 'SF Mono', 'SFMono-Regular', 'Consolas', 'Liberation Mono', Menlo, monospace;
+    --max-w: 920px;
+    --space-xs: 8px;
+    --space-sm: 16px;
+    --space-md: 32px;
+    --space-lg: 64px;
+    --space-xl: 96px;
+  }
+
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font);
+    background: var(--white);
+    color: var(--black);
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    background: var(--white); border-bottom: 1px solid var(--black); height: 56px;
+  }
+  nav .nav-inner {
+    max-width: var(--max-w); margin: 0 auto; padding: 0 24px;
+    height: 100%; display: flex; align-items: center; justify-content: space-between;
+  }
+  nav .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; color: var(--black); }
+  nav .logo svg { width: 22px; height: 22px; }
+  nav .logo span { font-size: 13px; font-weight: 700; letter-spacing: 1px; }
+  nav .links { display: flex; gap: 24px; align-items: center; }
+  nav .links a { color: var(--black); text-decoration: none; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; transition: opacity 0.2s; }
+  nav .links a:hover { opacity: 0.5; }
+  nav .links a.btn-gh { border: 1px solid var(--black); padding: 6px 16px; font-size: 10px; }
+  nav .links a.btn-gh:hover { background: var(--black); color: var(--white); opacity: 1; }
+
+  .container { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; }
+
+  .page-header { padding: 120px 0 48px; }
+  .page-header .label { font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--gray-50); margin-bottom: 12px; }
+  .page-header h1 { font-size: clamp(32px, 5vw, 56px); font-weight: 700; letter-spacing: -1px; line-height: 1.08; margin-bottom: 16px; }
+  .page-header .rule { width: 50px; height: 2px; background: var(--black); margin-bottom: 16px; }
+  .page-header .sub { font-size: 16px; color: var(--gray-50); line-height: 1.6; max-width: 600px; }
+  .page-header .request { border: 1px solid var(--black); padding: 24px; margin: 32px 0; font-size: 15px; line-height: 1.6; }
+  .page-header .request strong { display: block; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--gray-50); margin-bottom: 8px; }
+
+  section { padding: 64px 0; }
+  section + section { border-top: 1px solid var(--gray-10); }
+  section.alt { background: var(--gray-5); }
+
+  .step-label { font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--gray-50); margin-bottom: 8px; }
+  .step-label .gate { display: inline-block; border: 1px solid var(--gray-20); padding: 1px 8px; margin-left: 12px; font-size: 9px; letter-spacing: 1px; }
+  h2 { font-size: 26px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 24px; line-height: 1.2; }
+  h3 { font-size: 18px; font-weight: 700; margin-bottom: 16px; }
+  p { font-size: 15px; color: var(--gray-50); line-height: 1.8; margin-bottom: 16px; }
+  p strong { color: var(--black); }
+
+  .honesty-block { border: 1px solid var(--black); padding: 32px; margin: 32px 0; }
+  .honesty-block p { font-size: 14px; margin-bottom: 12px; color: var(--gray-50); }
+  .honesty-block p:last-child { margin-bottom: 0; }
+  .honesty-block .strong { font-weight: 700; color: var(--black); }
+  .honesty-block .collapse { border-top: 1px solid var(--black); padding-top: 16px; margin-top: 16px; }
+
+  table { width: 100%; border-collapse: collapse; margin: 24px 0; font-size: 14px; }
+  th { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; text-align: left; padding: 10px 16px; border-bottom: 1px solid var(--black); }
+  td { padding: 12px 16px; border-bottom: 1px solid var(--gray-10); vertical-align: top; }
+  td:first-child { font-weight: 700; }
+  .tag { display: inline-block; font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
+  .tag-green { color: var(--black); } .tag-yellow { color: var(--gray-50); } .tag-red { color: var(--gray-50); }
+
+  .tree { border: 1px solid var(--black); padding: 24px; font-family: var(--mono); font-size: 13px; line-height: 2.2; margin: 24px 0; }
+  .tree .red { color: #000; } .tree .yellow { color: #666; } .tree .green { color: #666; }
+  .tree .comment { color: #ccc; font-style: normal; }
+
+  .node-states { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0; margin: 24px 0; }
+  @media (max-width: 640px) { .node-states { grid-template-columns: 1fr; } }
+  .node-state { border: 1px solid var(--black); padding: 24px; }
+  .node-state + .node-state { border-left: none; }
+  @media (max-width: 640px) { .node-state + .node-state { border-left: 1px solid var(--black); border-top: none; } }
+  .node-state h4 { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px; }
+  .node-state p { font-size: 13px; margin-bottom: 0; }
+
+  .checklist { margin: 24px 0; }
+  .check-item { border: 1px solid var(--black); padding: 16px 24px; margin-bottom: 8px; display: flex; gap: 16px; align-items: flex-start; }
+  .check-item .check-result { font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; min-width: 60px; padding-top: 2px; }
+  .check-item .pass { color: var(--black); } .check-item .fail { color: var(--gray-50); }
+  .check-item .check-text { font-size: 14px; color: var(--gray-50); }
+  .check-item .check-text strong { color: var(--black); }
+
+  .output-box { border: 1px solid var(--black); padding: 32px; margin: 32px 0; }
+  .output-box p { font-size: 14px; margin-bottom: 12px; }
+  .output-box .first-step { font-size: 16px; font-weight: 700; color: var(--black); border-top: 1px solid var(--black); padding-top: 16px; margin-top: 16px; }
+
+  .alt-session { border: 1px solid var(--black); padding: 24px; margin: 24px 0; }
+  .alt-session h4 { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 12px; }
+  .alt-session p { font-size: 13px; margin-bottom: 8px; }
+
+  .nav-steps { position: sticky; top: 56px; background: var(--white); border-bottom: 1px solid var(--gray-10); padding: 16px 0; z-index: 99; }
+  .nav-steps .inner { max-width: var(--max-w); margin: 0 auto; padding: 0 24px; display: flex; gap: 0; }
+  .nav-steps a { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; text-decoration: none; color: var(--gray-50); padding: 6px 16px; border: 1px solid var(--gray-20); transition: all 0.2s; }
+  .nav-steps a + a { border-left: none; }
+  .nav-steps a:hover { background: var(--black); color: var(--white); }
+  @media (max-width: 720px) { .nav-steps .inner { flex-wrap: wrap; } .nav-steps a { font-size: 9px; padding: 4px 10px; } }
+
+  footer { padding: 64px 0; border-top: 1px solid var(--black); text-align: center; }
+  footer .links { display: flex; gap: 24px; justify-content: center; margin-bottom: 16px; }
+  footer .links a { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--black); text-decoration: none; }
+  footer .links a:hover { opacity: 0.5; }
+  footer p { font-size: 12px; color: var(--gray-50); margin-bottom: 0; }
+
+  @media (max-width: 768px) {
+    nav .links a:not(.btn-gh) { display: none; }
+    .container { padding: 0 16px; }
+    .page-header { padding: 100px 0 32px; }
+    section { padding: 48px 0; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a href="index.html" class="logo">
+      <svg viewBox="0 0 64 64" fill="none">
+        <circle cx="32" cy="32" r="29" stroke="#000000" stroke-width="1.5"/>
+        <circle cx="32" cy="32" r="19" stroke="#000000" stroke-width="1.5"/>
+        <circle cx="32" cy="32" r="9" fill="#000000"/>
+        <line x1="52" y1="14" x2="44" y2="22" stroke="#000000" stroke-width="1.5" stroke-linecap="round"/>
+        <polygon points="44,22 49,18 51,24" fill="#000000"/>
+      </svg>
+      <span>DECOMPOSER</span>
+    </a>
+    <div class="links">
+      <a href="index.html">SITE</a>
+      <a href="https://github.com/zbbsdsb/Decomposer-Skill/blob/main/PROTOCOL.md" target="_blank">PROTOCOL</a>
+      <a href="https://github.com/zbbsdsb/Decomposer-Skill" class="btn-gh" target="_blank">GITHUB</a>
+    </div>
+  </div>
+</nav>
+
+<div class="page-header">
+  <div class="container">
+    <div class="label">WORKED EXAMPLE</div>
+    <h1>Build the Next TikTok</h1>
+    <div class="rule"></div>
+    <p class="sub">A full walkthrough of the Decomposer Protocol applied to a single request. Non-technical founder. Limited budget. No code.</p>
+    <div class="request">
+      <strong>THE REQUEST</strong>
+      "I want to build a short-video platform like TikTok, but for a niche audience. I don't know how to code and I have a limited budget."
+    </div>
+  </div>
+</div>
+
+<div class="nav-steps">
+  <div class="inner">
+    <a href="#step1">STEP 01</a>
+    <a href="#step2">STEP 02</a>
+    <a href="#step3">STEP 03</a>
+    <a href="#step4">STEP 04</a>
+    <a href="#step5">STEP 05</a>
+    <a href="#output">OUTPUT</a>
+  </div>
+</div>
+
+<!-- Step 1 -->
+<section id="step1">
+  <div class="container">
+    <div class="step-label">STEP 01 <span class="gate">HARD GATE</span></div>
+    <h2>Honesty Fuse</h2>
+    <p>Before any analysis, the protocol demands a confession of limits. The first output is not a plan — it is three declarations.</p>
+    <div class="honesty-block">
+      <p><span class="strong">What I can address:</span> I can help you identify the core assumptions that would kill this idea before you spend any money. I can design a manual test that simulates the platform without writing any code.</p>
+      <p><span class="strong">Where I am blind:</span> I do not know your niche audience, what content format they prefer, whether they currently use existing platforms, or what your budget ceiling is. I also cannot tell you whether this market has room for a new entrant — that is an empirical question.</p>
+      <div class="collapse">
+        <p><span class="strong">Collapse risk:</span> You build a platform before validating that anyone in your niche wants a dedicated short-video experience. The most likely outcome is: you launch, nobody comes, and you cannot tell whether the idea was wrong or the execution was wrong.</p>
+      </div>
+    </div>
+    <p>No module lists. No feature breakdowns. No false comfort. <strong>The first honest act is refusing premature reassurance.</strong></p>
+  </div>
+</section>
+
+<!-- Step 2 -->
+<section id="step2" class="alt">
+  <div class="container">
+    <div class="step-label">STEP 02</div>
+    <h2>Uncertainty Mapping</h2>
+    <p>Every identifiable element is classified into one of three zones. The 70% rule applies: if Green exceeds 70%, the map is dishonest.</p>
+
+    <table>
+      <thead>
+        <tr><th>Element</th><th>Zone</th><th>Rationale</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Niche audience exists and wants this</td><td><span class="tag tag-red">RED</span></td><td>No data yet; we don't know if the problem is real</td></tr>
+        <tr><td>Manual content creation workflow</td><td><span class="tag tag-green">GREEN</span></td><td>Can be done with a shared folder and a phone</td></tr>
+        <tr><td>User acquisition without paid ads</td><td><span class="tag tag-yellow">YELLOW</span></td><td>Known question, unknown answer — depends on the niche</td></tr>
+        <tr><td>Platform hosting setup</td><td><span class="tag tag-green">GREEN</span></td><td>Standard web hosting, well-understood</td></tr>
+        <tr><td>Recommendation algorithm</td><td><span class="tag tag-yellow">YELLOW</span></td><td>Need is clear, approach is not — but irrelevant until user demand is confirmed</td></tr>
+        <tr><td>Monetization model</td><td><span class="tag tag-red">RED</span></td><td>Cannot design this until we know who the users are and what they value</td></tr>
+        <tr><td>Content moderation at scale</td><td><span class="tag tag-red">RED</span></td><td>Not relevant until we have users; belongs in a later iteration</td></tr>
+        <tr><td>First 100 users from organic channels</td><td><span class="tag tag-yellow">YELLOW</span></td><td>Strategy exists, feasibility depends on niche</td></tr>
+      </tbody>
+    </table>
+
+    <p><strong>Zone distribution:</strong> Green: 2 (25%), Yellow: 3 (37.5%), Red: 3 (37.5%). Passes the 70% rule — uncertainty is honestly represented.</p>
+  </div>
+</section>
+
+<!-- Step 3 -->
+<section id="step3">
+  <div class="container">
+    <div class="step-label">STEP 03</div>
+    <h2>Hierarchical Decomposition</h2>
+    <p>This is <strong>not</strong> functional decomposition. We are not breaking the project into modules. We are breaking it into epistemic layers: things you must know before you can know other things.</p>
+
+    <p><strong>Root unknown identified:</strong> "Niche audience exists and wants this." Everything else depends on this question.</p>
+
+    <div class="tree">
+      <span class="red">Niche audience exists and wants this</span> <span class="comment">[RED] [root]</span><br>
+      <span class="yellow">&nbsp;&nbsp;├── User acquisition (depends on knowing the niche)</span> <span class="comment">[YELLOW]</span><br>
+      <span class="red">&nbsp;&nbsp;├── Monetization model (depends on user profile)</span> <span class="comment">[RED]</span><br>
+      <span class="yellow">&nbsp;&nbsp;├── Recommendation algorithm (depends on user demand)</span> <span class="comment">[YELLOW]</span><br>
+      <span class="red">&nbsp;&nbsp;└── Content moderation at scale (depends on user demand)</span> <span class="comment">[RED]</span><br>
+      <br>
+      <span class="green">Manual content creation workflow</span> <span class="comment">[GREEN] [independent leaf]</span><br>
+      <span class="green">Platform hosting setup</span> <span class="comment">[GREEN] [independent leaf]</span>
+    </div>
+
+    <h3>Node States</h3>
+    <div class="node-states">
+      <div class="node-state">
+        <h4>EXECUTABLE</h4>
+        <p>Manual content creation workflow, Platform hosting setup — survival conditions met, act now.</p>
+      </div>
+      <div class="node-state">
+        <h4>PENDING VALIDATION</h4>
+        <p>User acquisition, Recommendation algorithm, Monetization model — know what information is needed, design the probe.</p>
+      </div>
+      <div class="node-state">
+        <h4>BLIND ZONE</h4>
+        <p>Content moderation at scale, Niche audience validation — cannot formulate what "resolved" looks like. Resolve adjacent nodes first.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Step 4 -->
+<section id="step4" class="alt">
+  <div class="container">
+    <div class="step-label">STEP 04</div>
+    <h2>Error Budget Assignment</h2>
+    <p>Every node gets three attributes: Confidence (how fast would failure surface?), Survival Condition (Alive if / Dead if), Lethality (what dies with it).</p>
+
+    <table>
+      <thead>
+        <tr><th>Node</th><th>Confidence</th><th>Survival Condition</th><th>Lethality</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>Niche audience validation</td>
+          <td>Low</td>
+          <td><strong>Alive if:</strong> 20 people from the niche voluntarily submit content via a manual process within 2 weeks. <strong>Dead if:</strong> fewer than 5 submit after direct invitation.</td>
+          <td>Kills: everything downstream</td>
+        </tr>
+        <tr>
+          <td>Manual content creation</td>
+          <td>High</td>
+          <td><strong>Alive if:</strong> one person can produce and publish 5 pieces of content per day using a phone and basic editing tools. <strong>Dead if:</strong> production takes more than 2 hours per piece.</td>
+          <td>Nothing (independent)</td>
+        </tr>
+        <tr>
+          <td>User acquisition</td>
+          <td>Medium</td>
+          <td><strong>Alive if:</strong> at least 50 people from the niche join a waitlist or follow a dedicated account after a targeted outreach campaign. <strong>Dead if:</strong> outreach to 200 people yields fewer than 10 sign-ups.</td>
+          <td>Kills: monetization model</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p><strong>Hard constraint applied:</strong> A node with "High" confidence but no written survival condition is automatically downgraded to "Low." No exceptions.</p>
+  </div>
+</section>
+
+<!-- Step 5 -->
+<section id="step5">
+  <div class="container">
+    <div class="step-label">STEP 05 <span class="gate">GATE KEEPER</span></div>
+    <h2>Anti-Shell Self-Check</h2>
+    <p>Five hard checks. If any fails, return to the corresponding step. Repeat until all pass.</p>
+
+    <div class="checklist">
+      <div class="check-item">
+        <span class="check-result pass">PASS</span>
+        <div class="check-text"><strong>Survival Condition</strong> — All three assigned nodes have concrete survival conditions. Remaining nodes are marked as dependent on the root.</div>
+      </div>
+      <div class="check-item">
+        <span class="check-result pass">PASS</span>
+        <div class="check-text"><strong>Jargon</strong> — Scanned for "leverage," "optimize," "robust," "best practice." None found. Descriptions are concrete.</div>
+      </div>
+      <div class="check-item">
+        <span class="check-result pass">PASS</span>
+        <div class="check-text"><strong>Uncertainty Ratio</strong> — Green: 25%, Yellow: 37.5%, Red: 37.5%. Yellow+Red = 75%.</div>
+      </div>
+      <div class="check-item">
+        <span class="check-result pass">PASS</span>
+        <div class="check-text"><strong>Honesty</strong> — Explicit "I don't know" present in Step 1: "I cannot tell you whether this market has room for a new entrant."</div>
+      </div>
+      <div class="check-item">
+        <span class="check-result pass">PASS</span>
+        <div class="check-text"><strong>Actionability</strong> — First step is stated below: "Identify 20 people in your target niche and offer them a simple way to submit short-form content manually."</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Output -->
+<section id="output" class="alt">
+  <div class="container">
+    <div class="step-label">THE OUTPUT</div>
+    <h2>What the Protocol Tells You</h2>
+    <div class="output-box">
+      <p>This is structurally different from what a standard AI planning session would produce. A standard session would generate a 20-module roadmap with confident timelines. This output says:</p>
+      <p>Here is the one thing you need to know first. Here is how to test it for free. Everything else waits.</p>
+      <div class="first-step">
+        FIRST STEP: Identify 20 people in your target niche and offer them a simple way to submit short-form content manually (via email, WhatsApp, or a shared folder). Do not build anything. Do not write code. Just see if they engage.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- What the Standard AI Produces -->
+<section>
+  <div class="container">
+    <div class="step-label">FOR CONTRAST</div>
+    <h2>What a Standard AI Plan Looks Like</h2>
+    <p>Same request, different approach. A standard AI assistant produces a confident, comprehensive module list. It looks structured. It looks helpful. It is a shell.</p>
+    <div class="alt-session">
+      <h4>STANDARD AI OUTPUT</h4>
+      <p>Phase 1 (Months 1-3): Build user authentication, profile management, and basic video upload functionality.</p>
+      <p>Phase 2 (Months 4-6): Implement a recommendation algorithm, build a content feed, and launch to 100 beta testers.</p>
+      <p>Phase 3 (Months 7-9): Add monetization, scale infrastructure, and open to the public.</p>
+      <p style="color: #ccc; font-style: italic;">No survival conditions. No uncertainty mapping. No mention of what happens if nobody wants a short-video platform for this niche. The output is structurally confident but epistemically empty.</p>
+    </div>
+    <p>Compare this to the Decomposer output above. The standard plan gives you the <strong>feeling</strong> of progress. The Decomposer output gives you the <strong>fact</strong> of progress. The feeling evaporates on contact with reality. The fact survives.</p>
+  </div>
+</section>
+
+<footer>
+  <div class="links">
+    <a href="index.html">SITE</a>
+    <a href="https://github.com/zbbsdsb/Decomposer-Skill" target="_blank">GITHUB</a>
+    <a href="https://github.com/zbbsdsb/Decomposer-Skill/blob/main/PROTOCOL.md" target="_blank">PROTOCOL</a>
+  </div>
+  <p>MIT LICENSE — STOP BUILDING SHELLS. START DECOMPOSING.</p>
+</footer>
+
+</body>
+</html>

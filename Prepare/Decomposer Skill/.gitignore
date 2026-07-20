@@ -1,0 +1,30 @@
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# TRAE workspace artifacts
+.trae-cn/
+.workbuddy/
+
+# Temporary / working files
+*.tmp
+*.bak
+
+# GitHub Pages
+_site/
+.sass-cache/
+.jekyll-cache/
+.jekyll-metadata
+Gemfile.lock
+
+# Generated promo artifacts (thumbnails, render backups)
+decomposer-promo/.thumbnails/
+decomposer-promo/.hyperframes/backup/

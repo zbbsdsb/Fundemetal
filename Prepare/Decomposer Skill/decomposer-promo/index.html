@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=1920, height=1080">
+  <title>Decomposer Protocol — The Anatomy of a Shell</title>
+
+  <!-- Fonts: HyperFrames maps Inter → inter, JetBrains Mono → jetbrains-mono at render time -->
+
+  <!-- GSAP v3.14.2 -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+
+  <style>
+    /* ========== RESET ========== */
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      background: #000;
+      font-family: 'Inter', sans-serif;
+    }
+
+    /* ========== COMPOSITION ROOT ========== */
+    #root {
+      position: relative;
+      width: 1920px;
+      height: 1080px;
+      overflow: hidden;
+      background: #FFFFFF;
+    }
+
+    /* ========== CLIP BASE ========== */
+    .clip {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    /* ========== SHARED ========== */
+    .display { font-family: 'Inter', sans-serif; font-weight: 900; }
+    .bold    { font-family: 'Inter', sans-serif; font-weight: 700; }
+    .regular { font-family: 'Inter', sans-serif; font-weight: 400; }
+    .mono    { font-family: 'JetBrains Mono', monospace; font-weight: 400; }
+
+    .scene-content {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      padding: 80px 100px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ========== SCENE 0 — FADE IN ========== */
+    #scene0 {
+      background: #000;
+    }
+
+    /* ========== SCENE 1 — SHELL CRACK ========== */
+    #scene1 {
+      background: #FFFFFF;
+    }
+
+    .s1-title {
+      font-size: 28px;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      color: #000;
+      margin-bottom: 60px;
+      padding-top: 20px;
+    }
+
+    .s1-module-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      z-index: 2;
+      position: relative;
+    }
+
+    .s1-module-item {
+      font-size: 22px;
+      color: #000;
+      padding: 18px 0;
+      border-bottom: 1px solid #E5E5E5;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .s1-module-item .mono {
+      font-size: 14px;
+      color: #666;
+      min-width: 80px;
+    }
+
+    /* The dark void that expands behind the crack */
+    .s1-void {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: #1a1a1a;
+      clip-path: polygon(0 0, 0 0, 0 0, 0 0);
+      z-index: 4;
+    }
+
+    /* Physical crack line (thin diagonal) — actual div, not pseudo-element */
+    .s1-crack-edge {
+      position: absolute;
+      top: -10%; left: -10%;
+      width: 120%; height: 120%;
+      background: repeating-linear-gradient(
+        135deg,
+        transparent 0px,
+        transparent 3px,
+        rgba(0,0,0,0.8) 3px,
+        rgba(0,0,0,0.8) 4px,
+        transparent 4px,
+        transparent 8px
+      );
+      opacity: 0;
+      z-index: 5;
+      pointer-events: none;
+    }
+
+    .s1-void-label {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      color: #FFFFFF;
+      font-size: 48px;
+      font-weight: 900;
+      letter-spacing: 4px;
+      text-transform: uppercase;
+      opacity: 0;
+      z-index: 6;
+      text-align: center;
+    }
+
+    .s1-void-sub {
+      color: #b3b3b3;
+      font-size: 18px;
+      font-weight: 400;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-top: 16px;
+    }
+
+    /* ========== SCENE 2 — THE WALL ========== */
+    #scene2 {
+      background: #FFFFFF;
+    }
+
+    .s2-typewriter {
+      font-size: 56px;
+      font-weight: 900;
+      color: #000;
+      line-height: 1.2;
+      margin-top: 120px;
+      max-width: 80%;
+    }
+
+    .s2-typewriter .char {
+      display: inline-block;
+      opacity: 0;
+    }
+
+    .s2-wall-panel {
+      position: absolute;
+      right: 0;
+      top: 0;
+      width: 380px;
+      height: 100%;
+      background: #1a1a1a;
+      transform: translateX(100%);
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 60px 40px;
+    }
+
+    .s2-wall-panel .mono {
+      color: #b3b3b3;
+      font-size: 13px;
+      letter-spacing: 1px;
+      margin-bottom: 30px;
+      text-transform: uppercase;
+    }
+
+    .s2-wall-panel .bold {
+      color: #FFF;
+      font-size: 18px;
+      line-height: 1.6;
+      margin-bottom: 12px;
+    }
+
+    .s2-question {
+      font-size: 22px;
+      color: #4d4d4d;
+      line-height: 1.6;
+      opacity: 0;
+      padding: 16px 0;
+      border-bottom: 1px solid #E5E5E5;
+      margin-top: 40px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .s2-question .mono {
+      font-size: 14px;
+      color: #666;
+    }
+
+    /* ========== SCENE 3 — FIVE STEPS ========== */
+    #scene3 {
+      background: #FFFFFF;
+    }
+
+    .s3-header {
+      font-size: 28px;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      color: #000;
+      margin-bottom: 60px;
+      padding-top: 20px;
+    }
+
+    .s3-steps-container {
+      display: flex;
+      gap: 12px;
+      flex: 1;
+      align-items: stretch;
+      position: relative;
+    }
+
+    .s3-step-card {
+      flex: 1;
+      background: #F5F5F5;
+      border: 1px solid #E5E5E5;
+      padding: 30px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      transform-origin: top;
+      scaleY: 0;
+      position: relative;
+    }
+
+    .s3-step-num {
+      font-size: 14px;
+      color: #666;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-bottom: 12px;
+    }
+
+    .s3-step-label {
+      font-size: 18px;
+      font-weight: 700;
+      color: #000;
+      text-align: center;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .s3-step-arrow {
+      position: absolute;
+      bottom: -30px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 14px;
+      color: #000;
+      opacity: 0;
+    }
+
+    .s3-metrics {
+      display: flex;
+      justify-content: center;
+      gap: 60px;
+      margin-top: 40px;
+      padding-top: 30px;
+      border-top: 1px solid #E5E5E5;
+      opacity: 0;
+    }
+
+    .s3-metric {
+      text-align: center;
+    }
+
+    .s3-metric-value {
+      font-size: 36px;
+      font-weight: 900;
+      color: #000;
+    }
+
+    .s3-metric-label {
+      font-size: 13px;
+      color: #666;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-top: 4px;
+    }
+
+    /* ========== SCENE 4 — HONESTY FUSE ========== */
+    #scene4 {
+      background: #FFFFFF;
+    }
+
+    .s4-header {
+      font-size: 28px;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      color: #000;
+      margin-bottom: 50px;
+      padding-top: 20px;
+    }
+
+    .s4-checkbox-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      flex: 1;
+      justify-content: center;
+      max-width: 800px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    .s4-checkbox-item {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      padding: 24px 0;
+      border-bottom: 1px solid #E5E5E5;
+      opacity: 0;
+    }
+
+    .s4-checkbox-box {
+      width: 28px;
+      height: 28px;
+      border: 2px solid #000;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .s4-checkbox-check {
+      width: 14px;
+      height: 14px;
+      background: #000;
+      opacity: 0;
+    }
+
+    .s4-checkbox-text {
+      font-size: 22px;
+      font-weight: 400;
+      color: #000;
+    }
+
+    /* ========== SCENE 5 — UNCERTAINTY MAP ========== */
+    #scene5 {
+      background: #FFFFFF;
+    }
+
+    .s5-header {
+      font-size: 28px;
+      letter-spacing: 6px;
+      text-transform: uppercase;
+      color: #000;
+      margin-bottom: 40px;
+      padding-top: 20px;
+    }
+
+    .s5-zone-grid {
+      display: flex;
+      gap: 16px;
+      flex: 1;
+    }
+
+    .s5-zone {
+      flex: 1;
+      border: 1px solid #E5E5E5;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .s5-zone-header {
+      padding: 20px;
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      text-align: center;
+      color: #FFF;
+    }
+
+    .s5-zone-known .s5-zone-header    { background: #D4D4D4; color: #000; }
+    .s5-zone-unknown .s5-zone-header  { background: #666666; color: #FFF; }
+    .s5-zone-unknowable .s5-zone-header { background: #1a1a1a; color: #FFF; }
+
+    .s5-zone-body {
+      flex: 1;
+      padding: 24px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .s5-zone-label {
+      font-size: 14px;
+      color: #000;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .s5-zone-desc {
+      font-size: 15px;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    .s5-zone-item {
+      font-size: 13px;
+      color: #666;
+      padding: 6px 0;
+      border-bottom: 1px solid #F0F0F0;
+      opacity: 0;
+    }
+
+    .s5-progress-area {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #E5E5E5;
+    }
+
+    .s5-progress-label {
+      font-size: 13px;
+      color: #666;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .s5-progress-track {
+      width: 100%;
+      height: 4px;
+      background: #E5E5E5;
+      position: relative;
+    }
+
+    .s5-progress-fill {
+      position: absolute;
+      top: 0; left: 0;
+      height: 100%;
+      width: 0%;
+      background: #000;
+    }
+
+    /* ========== SCENE 6 — CTA ========== */
+    #scene6 {
+      background: #FFFFFF;
+    }
+
+    .s6-cta-container {
+      position: absolute;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100%;
+      padding: 0 100px;
+      text-align: center;
+    }
+
+    .s6-cta-left {
+      font-size: 64px;
+      font-weight: 900;
+      color: #000;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      opacity: 0;
+      text-align: left;
+    }
+
+    .s6-cta-right {
+      font-size: 64px;
+      font-weight: 900;
+      color: #000;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      opacity: 0;
+      text-align: right;
+      margin-top: 8px;
+    }
+
+    .s6-cta-divider {
+      width: 100%;
+      height: 2px;
+      background: #000;
+      margin: 40px 0;
+      scaleX: 0;
+    }
+
+    .s6-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      opacity: 0;
+    }
+
+    .s6-logo {
+      font-size: 20px;
+      font-weight: 900;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #000;
+    }
+
+    .s6-url {
+      font-size: 14px;
+      color: #666;
+      letter-spacing: 1px;
+    }
+
+    .s6-end-screen {
+      position: absolute;
+      bottom: 60px;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      opacity: 0;
+    }
+
+    .s6-end-screen .mono {
+      font-size: 12px;
+      color: #666;
+      letter-spacing: 1px;
+    }
+
+    /* ========== RESPONSIVE (1:1 Twitter) ========== */
+    @media (max-aspect-ratio: 4/3) {
+      .scene-content { padding: 40px; }
+      .s1-title { font-size: 22px; }
+      .s1-module-item { font-size: 16px; padding: 12px 0; }
+      .s2-typewriter { font-size: 36px; margin-top: 60px; max-width: 70%; }
+      .s2-wall-panel { width: 260px; padding: 30px 20px; }
+      .s2-question { font-size: 16px; margin-top: 20px; }
+      .s3-header { font-size: 22px; margin-bottom: 30px; }
+      .s3-step-card { padding: 16px 10px; }
+      .s3-step-label { font-size: 13px; }
+      .s3-metrics { gap: 30px; }
+      .s3-metric-value { font-size: 24px; }
+      .s4-header { font-size: 22px; }
+      .s4-checkbox-text { font-size: 16px; }
+      .s5-header { font-size: 22px; }
+      .s5-zone-grid { flex-direction: column; gap: 8px; }
+      .s5-zone-desc { font-size: 13px; }
+      .s6-cta-left { font-size: 40px; }
+      .s6-cta-right { font-size: 40px; }
+      .s6-logo { font-size: 16px; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ========== COMPOSITION ROOT ========== -->
+  <div data-hf-id="hf-i657" id="root" data-composition-id="main" data-start="0" data-duration="45" data-width="1920" data-height="1080">
+
+    <!-- ==================== SCENE 0: FADE IN (0.0 - 0.5s) ==================== -->
+    <div data-hf-id="hf-3qkj" id="scene0" class="clip" data-start="0" data-duration="0.5" data-track-index="0">
+      <div data-hf-id="hf-1z76" id="scene0-inner"></div>
+    </div>
+
+    <!-- ==================== SCENE 1: SHELL CRACK (0.5 - 8.0s) ==================== -->
+    <div data-hf-id="hf-2gpp" id="scene1" class="clip" data-start="0.5" data-duration="7.5" data-track-index="1" data-layout-allow-occlusion="">
+      <div data-hf-id="hf-cn5c" class="scene-content">
+        <div data-hf-id="hf-s1dc" class="s1-title mono">THE ANATOMY OF A SHELL</div>
+
+        <div data-hf-id="hf-o2uq" class="s1-module-list">
+          <div data-hf-id="hf-wzwz" class="s1-module-item anim-s1">
+            <span data-hf-id="hf-12pv" class="mono">01</span>
+            <span data-hf-id="hf-i9y0" class="regular">Requirement Analysis</span>
+          </div>
+          <div data-hf-id="hf-r583" class="s1-module-item anim-s1">
+            <span data-hf-id="hf-0oeu" class="mono">02</span>
+            <span data-hf-id="hf-h5h2" class="regular">Architecture Design</span>
+          </div>
+          <div data-hf-id="hf-qqx2" class="s1-module-item anim-s1">
+            <span data-hf-id="hf-0a3t" class="mono">03</span>
+            <span data-hf-id="hf-v38s" class="regular">Implementation Plan</span>
+          </div>
+          <div data-hf-id="hf-qcm1" class="s1-module-item anim-s1">
+            <span data-hf-id="hf-zvss" class="mono">04</span>
+            <span data-hf-id="hf-u45i" class="regular">Testing Strategy</span>
+          </div>
+          <div data-hf-id="hf-pyb0" class="s1-module-item anim-s1">
+            <span data-hf-id="hf-zhhr" class="mono">05</span>
+            <span data-hf-id="hf-d7lu" class="regular">Deployment Pipeline</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Crack edge (diagonal line visual) -->
+      <div data-hf-id="hf-x34u" class="s1-crack-edge" data-layout-allow-occlusion="" data-layout-allow-overflow=""></div>
+
+      <!-- Dark void (expands via clip-path) -->
+      <div data-hf-id="hf-ewal" class="s1-void" data-layout-allow-occlusion=""></div>
+
+      <!-- Label inside void -->
+      <div data-hf-id="hf-rk1f" class="s1-void-label">
+        THIS IS A SHELL.
+        <div data-hf-id="hf-ygvi" class="s1-void-sub mono">NO DEPTH. NO UNCERTAINTY. NO TRUTH.</div>
+      </div>
+    </div>
+
+    <!-- ==================== SCENE 2: THE WALL (8.0 - 16.0s) ==================== -->
+    <div data-hf-id="hf-7wiw" id="scene2" class="clip" data-start="8.0" data-duration="8.0" data-track-index="2">
+      <div data-hf-id="hf-o0eg" class="scene-content">
+        <div data-hf-id="hf-weat" class="s2-typewriter" id="s2-typewriter">
+          Every plan has a wall.<br data-hf-id="hf-x5px">The wall is what you cannot see.
+        </div>
+
+        <div data-hf-id="hf-i98z" class="s2-question anim-s2">
+          <span data-hf-id="hf-mwsj" class="mono">01</span>
+          <span data-hf-id="hf-2za2">What lies beneath the surface?</span>
+        </div>
+        <div data-hf-id="hf-dw37" class="s2-question anim-s2">
+          <span data-hf-id="hf-6mwq" class="mono">02</span>
+          <span data-hf-id="hf-ddrc">What assumptions are hidden?</span>
+        </div>
+        <div data-hf-id="hf-dhs6" class="s2-question anim-s2">
+          <span data-hf-id="hf-eqe5" class="mono">03</span>
+          <span data-hf-id="hf-0xam">What if the plan is wrong?</span>
+        </div>
+      </div>
+
+      <!-- Wall panel slides in from right -->
+      <div data-hf-id="hf-to74" class="s2-wall-panel" id="s2-wall-panel">
+        <div data-hf-id="hf-sqjs" class="mono">THE WALL</div>
+        <div data-hf-id="hf-9esv" class="bold">You see a complete plan.<br data-hf-id="hf-rsrt">But the wall hides what you don't know.</div>
+        <div data-hf-id="hf-101c" class="bold" style="color:#b3b3b3; font-size:14px; margin-top:auto;">
+          Every shell has a wall. The wall is the boundary between what you know and what you refuse to ask.
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== SCENE 3: FIVE STEPS (16.0 - 25.0s) ==================== -->
+    <div data-hf-id="hf-5jiw" id="scene3" class="clip" data-start="16.0" data-duration="9.0" data-track-index="3">
+      <div data-hf-id="hf-mthd" class="scene-content">
+        <div data-hf-id="hf-1myj" class="s3-header mono">THE DECOMPOSER PROTOCOL</div>
+
+        <div data-hf-id="hf-wbri" class="s3-steps-container">
+          <div data-hf-id="hf-olt6" class="s3-step-card anim-s3">
+            <div data-hf-id="hf-v5c8" class="s3-step-num mono">STEP 01</div>
+            <div data-hf-id="hf-v345" class="s3-step-label">DECOMPOSE</div>
+          </div>
+          <div data-hf-id="hf-rwvi" class="s3-step-card anim-s3">
+            <div data-hf-id="hf-tyf5" class="s3-step-num mono">STEP 02</div>
+            <div data-hf-id="hf-qs7o" class="s3-step-label">ANALYZE</div>
+          </div>
+          <div data-hf-id="hf-sb6j" class="s3-step-card anim-s3">
+            <div data-hf-id="hf-ucq6" class="s3-step-num mono">STEP 03</div>
+            <div data-hf-id="hf-tw2k" class="s3-step-label">QUESTION</div>
+          </div>
+          <div data-hf-id="hf-sphk" class="s3-step-card anim-s3">
+            <div data-hf-id="hf-t5t3" class="s3-step-num mono">STEP 04</div>
+            <div data-hf-id="hf-25sn" class="s3-step-label">REBUILD</div>
+          </div>
+          <div data-hf-id="hf-pxcd" class="s3-step-card anim-s3">
+            <div data-hf-id="hf-tk44" class="s3-step-num mono">STEP 05</div>
+            <div data-hf-id="hf-sgfx" class="s3-step-label">VERIFY</div>
+          </div>
+        </div>
+
+        <div data-hf-id="hf-rnos" class="s3-metrics anim-s3-metrics">
+          <div data-hf-id="hf-2et3" class="s3-metric">
+            <div data-hf-id="hf-1lnm" class="s3-metric-value">5</div>
+            <div data-hf-id="hf-o7h6" class="s3-metric-label mono">STEPS</div>
+          </div>
+          <div data-hf-id="hf-j2wn" class="s3-metric">
+            <div data-hf-id="hf-2skp" class="s3-metric-value">0</div>
+            <div data-hf-id="hf-b4hx" class="s3-metric-label mono">ASSUMPTIONS</div>
+          </div>
+          <div data-hf-id="hf-iolm" class="s3-metric">
+            <div data-hf-id="hf-jyl5" class="s3-metric-value">100%</div>
+            <div data-hf-id="hf-86mj" class="s3-metric-label mono">HONESTY</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== SCENE 4: HONESTY FUSE (25.0 - 32.0s) ==================== -->
+    <div style="background-image: linear-gradient(135deg, rgb(255, 255, 255) 0%, rgba(255, 255, 255, 0.04) 100%)" data-hf-id="hf-uez4" id="scene4" class="clip" data-start="25.0" data-duration="7.0" data-track-index="4">
+      <div data-hf-id="hf-n7se" class="scene-content">
+        <div data-hf-id="hf-gx5g" class="s4-header mono">THE HONESTY FUSE</div>
+
+        <div data-hf-id="hf-p3zu" class="s4-checkbox-list">
+          <div data-hf-id="hf-qw8e" class="s4-checkbox-item anim-s4">
+            <div data-hf-id="hf-yn65" class="s4-checkbox-box">
+              <div data-hf-id="hf-72zi" class="s4-checkbox-check"></div>
+            </div>
+            <span data-hf-id="hf-ga7a" class="s4-checkbox-text">We don't know what we don't know</span>
+          </div>
+          <div data-hf-id="hf-nbn6" class="s4-checkbox-item anim-s4">
+            <div data-hf-id="hf-ompt" class="s4-checkbox-box">
+              <div data-hf-id="hf-son6" class="s4-checkbox-check"></div>
+            </div>
+            <span data-hf-id="hf-cvdy" class="s4-checkbox-text">Assumptions are not facts</span>
+          </div>
+          <div data-hf-id="hf-npy7" class="s4-checkbox-item anim-s4">
+            <div data-hf-id="hf-ptmw" class="s4-checkbox-box">
+              <div data-hf-id="hf-t2y7" class="s4-checkbox-check"></div>
+            </div>
+            <span data-hf-id="hf-kp9p" class="s4-checkbox-text">Uncertainty is not failure</span>
+          </div>
+          <div data-hf-id="hf-o498" class="s4-checkbox-item anim-s4">
+            <div data-hf-id="hf-pfbv" class="s4-checkbox-box">
+              <div data-hf-id="hf-th98" class="s4-checkbox-check"></div>
+            </div>
+            <span data-hf-id="hf-xyl5" class="s4-checkbox-text">Honesty is the only metric</span>
+          </div>
+          <div data-hf-id="hf-oik9" class="s4-checkbox-item anim-s4">
+            <div data-hf-id="hf-nfsq" class="s4-checkbox-box">
+              <div data-hf-id="hf-tvk9" class="s4-checkbox-check"></div>
+            </div>
+            <span data-hf-id="hf-spgn" class="s4-checkbox-text">Decompose or build shells</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== SCENE 5: UNCERTAINTY MAP (32.0 - 40.0s) ==================== -->
+    <div data-hf-id="hf-gngd" id="scene5" class="clip" data-start="32.0" data-duration="8.0" data-track-index="5">
+      <div data-hf-id="hf-m0vb" class="scene-content">
+        <div data-hf-id="hf-mo6k" class="s5-header mono">THE UNCERTAINTY MAP</div>
+
+        <div data-hf-id="hf-916s" class="s5-zone-grid">
+          <!-- Known Zone (Green → Light Gray) -->
+          <div data-hf-id="hf-n0hu" class="s5-zone s5-zone-known">
+            <div data-hf-id="hf-kf36" class="s5-zone-header">KNOWN</div>
+            <div data-hf-id="hf-ecpc" class="s5-zone-body">
+              <div data-hf-id="hf-q9ga" class="s5-zone-label">What you know</div>
+              <div data-hf-id="hf-uw2b" class="s5-zone-desc">Verified facts, proven patterns, established truths</div>
+              <div data-hf-id="hf-sa1j" class="s5-zone-item mono">Requirement validated</div>
+              <div data-hf-id="hf-0t3a" class="s5-zone-item mono">Architecture reviewed</div>
+              <div data-hf-id="hf-it10" class="s5-zone-item mono">Tests passing</div>
+            </div>
+          </div>
+
+          <!-- Unknown Zone (Yellow → Medium Gray) -->
+          <div data-hf-id="hf-jobx" class="s5-zone s5-zone-unknown">
+            <div data-hf-id="hf-ggkr" class="s5-zone-header">UNKNOWN</div>
+            <div data-hf-id="hf-ziy0" class="s5-zone-body">
+              <div data-hf-id="hf-p1ni" class="s5-zone-label">What you suspect</div>
+              <div data-hf-id="hf-qket" class="s5-zone-desc">Gaps, risks, assumptions that need testing</div>
+              <div data-hf-id="hf-956y" class="s5-zone-item mono">Edge cases undefined</div>
+              <div data-hf-id="hf-o6eq" class="s5-zone-item mono">Performance untested</div>
+              <div data-hf-id="hf-z0aj" class="s5-zone-item mono">Dependency unclear</div>
+            </div>
+          </div>
+
+          <!-- Unknowable Zone (Red → Dark) -->
+          <div data-hf-id="hf-drjp" class="s5-zone s5-zone-unknowable">
+            <div data-hf-id="hf-6idf" class="s5-zone-header">UNKNOWABLE</div>
+            <div data-hf-id="hf-yc0x" class="s5-zone-body">
+              <div data-hf-id="hf-7n61" class="s5-zone-label">What you cannot know</div>
+              <div data-hf-id="hf-046u" class="s5-zone-desc">Unknown unknowns, emergent behavior, black swans</div>
+              <div data-hf-id="hf-4h2h" class="s5-zone-item mono">Market response</div>
+              <div data-hf-id="hf-9qs1" class="s5-zone-item mono">User behavior</div>
+              <div data-hf-id="hf-4jlo" class="s5-zone-item mono">Future state</div>
+            </div>
+          </div>
+        </div>
+
+        <div data-hf-id="hf-nt8i" class="s5-progress-area">
+          <div data-hf-id="hf-tofw" class="s5-progress-label mono">DECOMPOSITION DEPTH</div>
+          <div data-hf-id="hf-4b1q" class="s5-progress-track">
+            <div data-hf-id="hf-qy9m" class="s5-progress-fill" id="s5-progress-fill"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==================== SCENE 6: CTA (40.0 - 45.0s) ==================== -->
+    <div data-hf-id="hf-xidr" id="scene6" class="clip" data-start="40.0" data-duration="5.0" data-track-index="6">
+      <div data-hf-id="hf-kptk" class="s6-cta-container">
+        <div data-hf-id="hf-m4yl" class="s6-cta-left" id="s6-cta-left">STOP BUILDING SHELLS.</div>
+        <div data-hf-id="hf-2wnu" class="s6-cta-right" id="s6-cta-right">START DECOMPOSING.</div>
+        <div data-hf-id="hf-1a1u" class="s6-cta-divider" id="s6-cta-divider"></div>
+
+        <div data-hf-id="hf-9k0s" class="s6-footer" id="s6-footer">
+          <div data-hf-id="hf-rdns" class="s6-logo">DECOMPOSER</div>
+          <div data-hf-id="hf-us6c" class="s6-url mono">decomposer.dev</div>
+        </div>
+      </div>
+
+      <div data-hf-id="hf-ishq" class="s6-end-screen" id="s6-end-screen">
+        <div data-hf-id="hf-l527" class="mono">OPEN SOURCE  ·  COGNITIVE PROTOCOL  ·  v1.0</div>
+      </div>
+    </div>
+
+    <!-- ========== TRANSITION OVERLAY ========== -->
+    <div data-hf-id="hf-wy55" id="transition-overlay" style="
+      position: absolute; top: 0; left: 0;
+      width: 100%; height: 100%;
+      background: #000;
+      z-index: 100;
+      pointer-events: none;
+      opacity: 0;
+      visibility: hidden;
+    "></div>
+
+  </div><!-- /root -->
+
+  <script>
+    window.__timelines = window.__timelines || {};
+    var tl = gsap.timeline({ paused: true });
+
+    // ============================================================
+    // HELPER: Typewriter — split text into char spans
+    // ============================================================
+    function initTypewriter(el) {
+      var text = el.textContent;
+      el.textContent = '';
+      var chars = text.split('');
+      for (var i = 0; i < chars.length; i++) {
+        var span = document.createElement('span');
+        span.className = 'char';
+        span.textContent = chars[i] === ' ' ? '\u00A0' : chars[i];
+        el.appendChild(span);
+      }
+      return el.querySelectorAll('.char');
+    }
+
+    // ============================================================
+    // SCENE 0: FADE IN  (0.0 - 0.5s)
+    // ============================================================
+    tl.fromTo('#scene0-inner',
+      { opacity: 0 },
+      { opacity: 1, duration: 0.5, ease: 'power2.out' },
+      0
+    );
+
+    // ============================================================
+    // SCENE 1: SHELL CRACK  (0.5 - 8.0s)
+    // ============================================================
+    // Module items stagger in
+    tl.fromTo('.anim-s1',
+      { opacity: 0, x: -30 },
+      { opacity: 1, x: 0, duration: 0.5, stagger: 0.08, ease: 'power2.out' },
+      0.7
+    );
+
+    // Crack edge diagonal line appears
+    tl.fromTo('.s1-crack-edge',
+      { opacity: 0 },
+      { opacity: 1, duration: 0.3, ease: 'power2.out' },
+      1.8
+    );
+
+    // Dark void expands via clip-path (the shell crack)
+    tl.fromTo('.s1-void',
+      { clipPath: 'polygon(0 0, 0 0, 0 0, 0 0)' },
+      { clipPath: 'polygon(0 0, 100% 0, 100% 100%, 0 100%)', duration: 2.5, ease: 'power4.inOut' },
+      2.0
+    );
+
+    // "This is a shell." label appears in void
+    tl.fromTo('.s1-void-label',
+      { opacity: 0, y: 20 },
+      { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out' },
+      5.0
+    );
+
+    // Hard-kill scene 1 elements
+    tl.set('#scene1 .anim-s1', { opacity: 0, visibility: 'hidden' }, 7.85);
+    tl.set('.s1-void-label', { opacity: 0, visibility: 'hidden' }, 7.85);
+    tl.set('.s1-crack-edge', { opacity: 0, visibility: 'hidden' }, 7.85);
+    tl.set('.s1-void', { opacity: 0, visibility: 'hidden' }, 7.85);
+    tl.set('.s1-title', { opacity: 0, visibility: 'hidden' }, 7.85);
+
+    // ============================================================
+    // SCENE 2: THE WALL  (8.0 - 16.0s)
+    // ============================================================
+    // Typewriter: split text, reveal char by char
+    var twEl = document.getElementById('s2-typewriter');
+    var twChars = initTypewriter(twEl);
+
+    tl.fromTo(twChars,
+      { opacity: 0 },
+      { opacity: 1, duration: 0.01, stagger: 0.035, ease: 'steps(1, end)' },
+      8.2
+    );
+
+    // Wall panel slides in from right
+    tl.fromTo('#s2-wall-panel',
+      { x: 380 },
+      { x: 0, duration: 0.8, ease: 'power3.out' },
+      8.5
+    );
+
+    // Questions appear one by one
+    tl.fromTo('.anim-s2',
+      { opacity: 0, y: 20 },
+      { opacity: 1, y: 0, duration: 0.4, stagger: 0.25, ease: 'power2.out' },
+      10.0
+    );
+
+    // Hard-kill scene 2
+    tl.set('#s2-typewriter', { opacity: 0, visibility: 'hidden' }, 15.85);
+    tl.set('#s2-wall-panel', { opacity: 0, visibility: 'hidden' }, 15.85);
+    tl.set('.anim-s2', { opacity: 0, visibility: 'hidden' }, 15.85);
+
+    // ============================================================
+    // SCENE 3: FIVE STEPS  (16.0 - 25.0s)
+    // ============================================================
+    // Steps expand from top (scaleY: 0 → 1)
+    tl.fromTo('.anim-s3',
+      { scaleY: 0, opacity: 0 },
+      { scaleY: 1, opacity: 1, duration: 0.5, stagger: 0.1, ease: 'back.out(1.4)', transformOrigin: 'top' },
+      16.3
+    );
+
+    // Metrics fade in
+    tl.fromTo('.anim-s3-metrics',
+      { opacity: 0, y: 20 },
+      { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' },
+      18.5
+    );
+
+    // Hard-kill scene 3
+    tl.set('.anim-s3', { opacity: 0, visibility: 'hidden' }, 24.85);
+    tl.set('.anim-s3-metrics', { opacity: 0, visibility: 'hidden' }, 24.85);
+    tl.set('.s3-header', { opacity: 0, visibility: 'hidden' }, 24.85);
+
+    // ============================================================
+    // SCENE 4: HONESTY FUSE  (25.0 - 32.0s)
+    // ============================================================
+    // Checkbox items appear one by one
+    tl.fromTo('.anim-s4',
+      { opacity: 0, x: -20 },
+      { opacity: 1, x: 0, duration: 0.4, stagger: 0.2, ease: 'power2.out' },
+      25.3
+    );
+
+    // Checkbox check marks fill in
+    tl.fromTo('.s4-checkbox-check',
+      { opacity: 0, scale: 0.5 },
+      { opacity: 1, scale: 1, duration: 0.2, stagger: 0.2, ease: 'back.out(2)' },
+      25.5
+    );
+
+    // Hard-kill scene 4
+    tl.set('.anim-s4', { opacity: 0, visibility: 'hidden' }, 31.85);
+    tl.set('.s4-header', { opacity: 0, visibility: 'hidden' }, 31.85);
+
+    // ============================================================
+    // SCENE 5: UNCERTAINTY MAP  (32.0 - 40.0s)
+    // ============================================================
+    // Zone items appear staggered
+    tl.fromTo('.s5-zone-item',
+      { opacity: 0, y: 10 },
+      { opacity: 1, y: 0, duration: 0.3, stagger: 0.06, ease: 'power2.out' },
+      32.5
+    );
+
+    // Progress bar fills
+    tl.fromTo('#s5-progress-fill',
+      { width: '0%' },
+      { width: '72%', duration: 1.5, ease: 'power3.out' },
+      33.5
+    );
+
+    // Hard-kill scene 5
+    tl.set('.s5-zone-item', { opacity: 0, visibility: 'hidden' }, 39.85);
+    tl.set('#s5-progress-fill', { opacity: 0, visibility: 'hidden' }, 39.85);
+    tl.set('.s5-header', { opacity: 0, visibility: 'hidden' }, 39.85);
+    tl.set('.s5-zone', { opacity: 0, visibility: 'hidden' }, 39.85);
+    tl.set('.s5-progress-area', { opacity: 0, visibility: 'hidden' }, 39.85);
+
+    // ============================================================
+    // SCENE 6: CTA  (40.0 - 45.0s)
+    // ============================================================
+    // "STOP BUILDING SHELLS." from left (typewriter effect)
+    var ctaLeft = document.getElementById('s6-cta-left');
+    var ctaLeftChars = initTypewriter(ctaLeft);
+    tl.fromTo(ctaLeftChars,
+      { opacity: 0 },
+      { opacity: 1, duration: 0.01, stagger: 0.04, ease: 'steps(1, end)' },
+      40.3
+    );
+
+    // "START DECOMPOSING." from right (typewriter effect)
+    var ctaRight = document.getElementById('s6-cta-right');
+    var ctaRightChars = initTypewriter(ctaRight);
+    tl.fromTo(ctaRightChars,
+      { opacity: 0 },
+      { opacity: 1, duration: 0.01, stagger: 0.04, ease: 'steps(1, end)' },
+      41.0
+    );
+
+    // Divider expands
+    tl.fromTo('#s6-cta-divider',
+      { scaleX: 0 },
+      { scaleX: 1, duration: 0.5, ease: 'power3.out' },
+      42.0
+    );
+
+    // Footer (logo + URL) fades in
+    tl.fromTo('#s6-footer',
+      { opacity: 0, y: 15 },
+      { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' },
+      42.5
+    );
+
+    // End screen tagline
+    tl.fromTo('#s6-end-screen',
+      { opacity: 0, y: 10 },
+      { opacity: 1, y: 0, duration: 0.4, ease: 'power2.out' },
+      43.2
+    );
+
+    // ============================================================
+    // REGISTER TIMELINE
+    // ============================================================
+    window.__timelines['main'] = tl;
+  </script>
+</body>
+</html>
