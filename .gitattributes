@@ -1,2 +1,11 @@
 # Auto detect text files and perform LF normalization
 * text=auto
+
+# --- Language stats: keep the repo recognized as Markdown-first ---
+# The Tension Mining skill ships an optional academic paper (LaTeX) and a
+# Python validation script as grounding evidence. They are NOT the product
+# (the product is the Markdown protocol), so we keep them out of the
+# GitHub language bar to avoid the misleading "TeX + Python" split.
+skills/tension-mining/papers/** linguist-documentation
+skills/tension-mining/scripts/** linguist-vendored
+skills/tension-mining/tests/**    linguist-vendored

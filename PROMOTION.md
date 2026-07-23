@@ -8,13 +8,13 @@
 
 ## 1. One-liner (bio / link in bio)
 
-> Fundemetal — deep-level, methodological AI skill tools. Three cognitive protocols (Decomposer → Tension Mining → Great Expectations), not prompt templates. Free, MIT, copy-paste into any LLM.
+> Fundemetal — deep-level, methodological AI skill tools. Three cognitive protocols (Decomposer → Tension Mining → Great Expectations), not prompt templates. Free, CC0, copy-paste into any LLM.
 
 ---
 
 ## 2. GitHub repo description (≤ 350 chars)
 
-> Deep-level, methodological AI skill tools. Three cognitive protocols, one discipline. MIT, platform-agnostic Markdown.
+> Deep-level, methodological AI skill tools. Three cognitive protocols, one discipline. CC0, platform-agnostic Markdown.
 
 **Topics to set:** `ai`, `llm`, `prompt-engineering`, `agent`, `methodology`, `skills`, `cognitive`, `markdown`
 
@@ -36,7 +36,7 @@ It currently has three, designed to be used in sequence:
 - **Tension Mining** — surface the hidden conflicts and trade-offs a problem is hiding.
 - **Great Expectations** — set what "good" looks like *before* you act, so you can tell success from failure.
 
-Everything is plain Markdown, MIT-licensed, and platform-agnostic — paste it into ChatGPT, Claude, Cursor, whatever. No API, no SaaS, no lock-in.
+Everything is plain Markdown, CC0-licensed, and platform-agnostic — paste it into ChatGPT, Claude, Cursor, whatever. No API, no SaaS, no lock-in.
 
 - Repo: [repo-url]
 - Site: [site-url]
@@ -61,7 +61,7 @@ So I built **Fundemetal** around a different unit: the *cognitive protocol* — 
 2. **Tension Mining** — find the contradictions the problem is quietly hiding.
 3. **Great Expectations** — decide what success means *before* you start, so failure is detectable.
 
-They're plain Markdown, MIT, and work in any frontend (ChatGPT / Claude / Cursor / your agent). No tooling to install.
+They're plain Markdown, CC0, and work in any frontend (ChatGPT / Claude / Cursor / your agent). No tooling to install.
 
 - Repo: [repo-url]
 - Site: [site-url]
@@ -76,7 +76,7 @@ Genuinely interested: do you think "protocols" hold up better than prompts in pr
 
 Fundemetal ships *cognitive protocols* instead of prompt templates. The thesis: a repeatable thinking procedure with anti-cheat gates beats a clever one-liner, because it survives when the task changes.
 
-Three protocols, meant to run in order: Decomposer → Tension Mining → Great Expectations. All Markdown, MIT, paste anywhere.
+Three protocols, meant to run in order: Decomposer → Tension Mining → Great Expectations. All Markdown, CC0, paste anywhere.
 
 - Repo: [repo-url]
 
@@ -94,7 +94,7 @@ Three protocols, meant to run in order: Decomposer → Tension Mining → Great 
 
 **5/** Protocol 3 — **Great Expectations**. Set what "good" means *before* you act, so you can tell a win from a loss instead of vibing about it after.
 
-**6/** They chain: Decomposer → Tension Mining → Great Expectations. Plain Markdown, MIT, paste into any LLM. No API, no SaaS.
+**6/** They chain: Decomposer → Tension Mining → Great Expectations. Plain Markdown, CC0, paste into any LLM. No API, no SaaS.
 
 **7/** It's free and on GitHub: [repo-url] — if you build with LLMs, steal the idea at minimum. RTs appreciated 🤝
 
@@ -115,7 +115,7 @@ Three protocols ship today, designed to chain:
 - **Tension Mining** — surface hidden conflicts & trade-offs
 - **Great Expectations** — define success before you act
 
-MIT-licensed, plain Markdown, platform-agnostic. Paste into ChatGPT, Claude, Cursor — no install.
+CC0-licensed, plain Markdown, platform-agnostic. Paste into ChatGPT, Claude, Cursor — no install.
 
 - Repo: [repo-url]
 - Site: [site-url]
@@ -135,7 +135,7 @@ We open-sourced three, meant to run in sequence:
 🔹 Tension Mining — expose the conflicts a problem is hiding
 🔹 Great Expectations — define success before you start
 
-Free, MIT, plain Markdown. Drop them into any LLM. No lock-in.
+Free, CC0, plain Markdown. Drop them into any LLM. No lock-in.
 
 If your team is scaling AI usage, this is a small, high-leverage thing to adopt: [repo-url]
 
@@ -151,7 +151,7 @@ Hi — I maintain Fundemetal, a small open-source project that takes a different
 
 Instead of prompt templates, it ships *cognitive protocols*: thinking procedures with explicit steps and anti-cheat gates, designed to run inside any LLM or agent. Three ship today and chain together: Decomposer → Tension Mining → Great Expectations.
 
-It's MIT, plain Markdown, platform-agnostic. I thought your readers (building serious agent workflows) might find the "protocol over template" framing useful.
+It's CC0, plain Markdown, platform-agnostic. I thought your readers (building serious agent workflows) might find the "protocol over template" framing useful.
 
 Happy to write a short guest note or just point you at the repo: [repo-url]
 

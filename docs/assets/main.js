@@ -70,4 +70,22 @@
   } else {
     els.forEach(function (el) { el.classList.add("in"); });
   }
+
+  /* ---------- formation filter ---------- */
+  var filterBtns = document.querySelectorAll(".filter-btn");
+  var allCards = document.querySelectorAll(".card.reveal");
+  filterBtns.forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      filterBtns.forEach(function (b) { b.classList.remove("active"); });
+      btn.classList.add("active");
+      var f = btn.getAttribute("data-filter");
+      allCards.forEach(function (c) {
+        if (f === "all" || c.getAttribute("data-formation") === f) {
+          c.classList.remove("hidden");
+        } else {
+          c.classList.add("hidden");
+        }
+      });
+    });
+  });
 })();

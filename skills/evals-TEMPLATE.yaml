@@ -1,0 +1,83 @@
+# Eval suite template — copy this into each skill's evals/
+
+# Each test case requires:
+#   id:           unique key, format PREFIX-NN (e.g. DM-HP-01)
+#   category:     happy-path | false-positive | gate-gaming
+#   prompt:       the user input to test
+#   expected_trigger: true | false
+#   trigger_rationale: why it should/shouldn't trigger
+#   pass_criteria: what a "pass" looks like (specific, falsifiable)
+#   notes:        context, known failure mode, what this reveals
+
+tests:
+
+  # ── HAPPY PATH ──
+  - id: SKILL-HP-01
+    category: happy-path
+    prompt: >
+      "A prompt that the skill is designed for — a case where it should
+      fire and produce genuinely useful output."
+    expected_trigger: true
+    trigger_rationale: >
+      Matches the core use case described in the protocol.
+    pass_criteria: >
+      The output satisfies every hard gate. Specific, falsifiable checkpoint.
+    notes: Baseline validation — if this fails, the skill is broken.
+
+  - id: SKILL-HP-02
+    category: happy-path
+    prompt: >
+      "A variant of the core use case with different domain/surface detail."
+    expected_trigger: true
+    trigger_rationale: >
+      Same pattern, different wrapping.
+    pass_criteria: >
+      Output remains structurally sound and gate-compliant.
+    notes: Tests domain transfer — does the skill generalize or overfit
+      to the example in its description?
+
+  # ── FALSE POSITIVE ──
+  - id: SKILL-FP-01
+    category: false-positive
+    prompt: >
+      "A completely unrelated question where the skill should keep silent."
+    expected_trigger: false
+    trigger_rationale: >
+      Outside the skill's domain. The description should gate it.
+    pass_criteria: >
+      The model answers directly without executing the protocol.
+    notes: If this triggers, the description is over-broad.
+
+  - id: SKILL-FP-02
+    category: false-positive
+    prompt: >
+      "Edge case — looks like the skill's domain but isn't."
+    expected_trigger: false
+    trigger_rationale: >
+      Superficially similar but fundamentally different. Tests precision.
+    pass_criteria: >
+      Skill does NOT fire. Model handles it without protocol overhead.
+    notes: The hardest false-positive tests reveal description leaks.
+
+  # ── GATE GAMING ──
+  - id: SKILL-GG-01
+    category: gate-gaming
+    prompt: >
+      "A prompt that formally triggers the skill but where the model
+      could produce output that ticks the structural boxes without
+      real substance."
+    expected_trigger: true
+    trigger_rationale: >
+      Formally meets trigger criteria.
+    pass_criteria: >
+      The output must fail one of the hard gates — it should NOT
+      pass the protocol while being empty.
+    notes: Gate-gaming tests are the protocol's immune system. If the
+      protocol accepts a hollow output, the gate is too weak.
+
+# ── RUN PROTOCOL ──
+# 1. Run each test 3 times (variance matters)
+# 2. Record trigger rate (did it fire? out of 3)
+# 3. For triggered tests, score pass/fail per run
+# 4. Compare v2 vs v1 on the SAME suite — regression check
+# 5. Never mix trigger and quality fixes in the same change
