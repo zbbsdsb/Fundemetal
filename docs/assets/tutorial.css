@@ -1,0 +1,87 @@
+/* Tutorial page — long-form reading styles */
+
+.tut-hero {
+  padding: 5rem 0 2rem; text-align: center;
+}
+.tut-hero .eyebrow { margin-bottom: .75rem; }
+.tut-h1 {
+  font-family: var(--font-display); font-size: 2.4rem; font-weight: 500;
+  line-height: 1.2; margin-bottom: 1rem;
+}
+.tut-hero > .wrap > p:first-of-type {
+  font-size: 1.05rem; line-height: 1.6; color: var(--muted);
+  max-width: 620px; margin: 0 auto;
+}
+
+.tut-body {
+  padding: 0 0 4rem;
+}
+.tut-article {
+  max-width: 680px; margin: 0 auto;
+}
+.tut-article h2 {
+  font-family: var(--font-display); font-size: 1.6rem; font-weight: 600;
+  margin: 3rem 0 1rem; padding-top: .5rem;
+  border-top: 1px solid var(--line);
+}
+.tut-article h3 {
+  font-family: var(--font-mono); font-size: .82rem; letter-spacing: .08em;
+  text-transform: uppercase; color: var(--muted);
+  margin: 2rem 0 .75rem;
+}
+.tut-article p {
+  font-family: var(--font-display); font-size: 1rem; line-height: 1.65;
+  margin-bottom: 1.2rem;
+}
+.tut-article strong { font-weight: 600; }
+.tut-article em { font-style: italic; }
+
+.tut-quote {
+  margin: 1.5rem 0; padding: .1rem 1.5rem;
+  border-left: 3px solid var(--ink); border-radius: 4px;
+  background: color-mix(in srgb, var(--ink) 4%, transparent);
+}
+.tut-quote p { font-size: .95rem; }
+
+.tut-article hr {
+  border: none; border-top: 1px solid var(--line);
+  margin: 2rem 0;
+}
+
+/* Tables */
+.tut-article table {
+  width: 100%; border-collapse: collapse; margin: 1.5rem 0;
+  font-family: var(--font-mono); font-size: .78rem;
+}
+.tut-article th, .tut-article td {
+  padding: 8px 12px; text-align: left;
+  border-bottom: 1px solid var(--line);
+}
+.tut-article th {
+  font-weight: 600; text-transform: uppercase; letter-spacing: .06em;
+  color: var(--muted); font-size: .7rem;
+}
+
+/* Code blocks */
+.tut-article code {
+  font-family: var(--font-mono); font-size: .82rem;
+  background: color-mix(in srgb, var(--ink) 8%, transparent);
+  padding: 2px 6px; border-radius: 4px;
+}
+.tut-article pre {
+  background: color-mix(in srgb, var(--ink) 6%, transparent);
+  padding: 1rem 1.2rem; border-radius: 8px; overflow-x: auto;
+  margin: 1.2rem 0;
+  border: 1px solid var(--line);
+}
+.tut-article pre code {
+  background: transparent; padding: 0; font-size: .82rem;
+}
+
+/* Active nav */
+.nav-links a.active { text-decoration: underline; text-underline-offset: 6px; text-decoration-thickness: 2px; }
+
+@media (max-width: 640px) {
+  .tut-h1 { font-size: 1.8rem; }
+  .tut-article { padding: 0 1rem; }
+}

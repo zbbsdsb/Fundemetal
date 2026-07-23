@@ -17,3 +17,10 @@
 ## Build notes
 - Landing page (storefront) lives in `docs/` (`docs/index.html` + `docs/assets/`); deployed via GitHub Pages (`.github/workflows/pages.yml`). Skill library lives in `skills/`.
 - Theme: 3-state (system/light/dark) via `data-theme` + localStorage; respects `prefers-color-scheme`.
+
+## Trae integration (local install)
+- "Trae Work" on this machine = **Trae CN**; global user skills dir is `C:\Users\chkev\.trae-cn\skills\` (each skill = `<name>/SKILL.md` with `name`+`description` YAML frontmatter).
+- Registration: `C:\Users\chkev\.trae-cn\skill-config.json` → `managedSkills` dict; add `"<name>": "user_upload"` to make it appear.
+- Install recipe: copy each `skills/<name>/` folder **whole** into `~/.trae-cn/skills/<name>/` (so `PROTOCOL.md`/`references/` resolve), then register in config. Overwrites refresh to repo-latest.
+- **Gotcha:** repo `skills/decomposer/SKILL.md` has NO YAML frontmatter (starts `# Decomposer Skill`). Prepend `name`/`description` when installing or Trae won't load it. (Other 22 skills already have frontmatter.)
+- Several Trae installs exist (Trae / Trae CN / TRAE SOLO CN / .trae / .trae-cn); `.trae-cn` is the active "Trae Work" one.
