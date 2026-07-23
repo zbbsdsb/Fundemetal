@@ -10,7 +10,7 @@
 
 ## What it is
 
-Fundemetal is a small, curated collection of **cognitive protocols** — plain Markdown skill files you drop into your agent (Claude, TRAE, Cursor, Windsurf). Each one attacks a specific failure mode in how we think, plan, and decompose problems. The output isn't a task done for you; it's a better-shaped problem and a sharper plan.
+Fundemetal is a systematic library of **cognitive protocols** — plain Markdown skill files you drop into your agent (Claude, TRAE, Cursor, Windsurf). Each one attacks a specific failure mode in how we think, plan, and decompose problems. The output isn't a task done for you; it's a better-shaped problem and a sharper plan.
 
 ## The skills
 
@@ -59,16 +59,35 @@ Copy a skill folder (e.g. `skills/decomposer/`) into your agent's skills directo
 
 ```markdown
 # In your agent, reference the protocol:
-"Follow the Decomposer protocol in SKILL.md before proposing any plan."
+"Follow the Sycophancy Breaker protocol in SKILL.md."
 ```
 
-## The sequence
+Each skill ships with an `evals/` test suite — run them to verify your agent complies with the hard gates.
 
-**Decomposer → Tension Mining → Great Expectations.** Each is strong alone; run them in sequence and you get something no other tool can give you — honest unknowns, the underlying force, then a genuinely original plan.
+## Formations
 
-Insight Crystallizer is a **meta-skill** — it *manufactures* new skills rather than running in the sequence. Invoke it whenever a reusable methodology surfaces in your work.
+The 23 skills are organized into 7 formations by cognitive function:
 
-Shoulders of Giants covers a different moment entirely — choosing which existing code to stand on, handled as a sovereignty decision rather than a keyword search. It runs whenever a build-vs-borrow call is on the table.
+| Formation | Skills | Purpose |
+|-----------|--------|---------|
+| **Build** | Decomposer · Tension Mining · Great Expectations | The core chain: surface unknowns, find the force, build the plan |
+| **Falsify** | Pre-Mortem · Outside View · Resulting | Kill your plan before it kills you |
+| **Evidence** | Source Ledger · Disconfirmation Hunt | Tag every claim, then hunt the refutation |
+| **Adversarial** | Crux Finder · Red Cell · Silent Start | Disagreement is an asset — use it |
+| **Single** | Question Autopsy · Quantity Quota · Trade-off Ledger · Second-Order · Steelman Forge · Stopping Rule | Six standalone cognitive operators |
+| **AI-native** | Sycophancy Breaker · Goal Anchor | Failure modes that only exist because the thinker is an LLM |
+| **Meta** | Taboo · Curator · Insight Crystallizer · Shoulders of Giants | Maintains the library itself |
+
+Start with the **Build** chain (01–03). Add **Falsify** (06–08) when you need to stress-test a plan. Use **Single** operators (14–19) for targeted cognitive traps.
+
+## Measurement
+
+Every skill has an `evals/` directory with test cases across three categories:
+- **Happy path** — should trigger AND pass
+- **False positive** — should NOT trigger (description precision)
+- **Gate-gaming** — should trigger but fail if output is hollow (anti-cheat integrity)
+
+[Full framework → MEASUREMENT.md](MEASUREMENT.md)
 
 ## License
 

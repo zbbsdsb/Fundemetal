@@ -88,4 +88,37 @@
       });
     });
   });
+
+  /* ---------- stat counter (animated) ---------- */
+  var statNums = document.querySelectorAll(".stat-num");
+  if ("IntersectionObserver" in window && statNums.length) {
+    var counted = {};
+    var ioStats = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting && !counted[en.target.dataset.target]) {
+          counted[en.target.dataset.target] = true;
+          var el = en.target;
+          var target = parseInt(el.dataset.target, 10);
+          if (target > 0) {
+            var duration = 1200, steps = 30;
+            var increment = target / steps;
+            var current = 0;
+            var timer = setInterval(function () {
+              current += increment;
+              if (current >= target) {
+                el.textContent = target;
+                clearInterval(timer);
+              } else {
+                el.textContent = Math.round(current);
+              }
+            }, duration / steps);
+          }
+          ioStats.unobserve(el);
+        }
+      });
+    }, { threshold: 0.5 });
+    statNums.forEach(function (el) { ioStats.observe(el); });
+  } else if (statNums.length) {
+    statNums.forEach(function (el) { el.textContent = el.dataset.target; });
+  }
 })();
