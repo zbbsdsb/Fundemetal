@@ -5,6 +5,8 @@
 **Deep-level, methodological AI skill tools.** We ship only one kind of AI skill: cognitive protocols that force AI (and humans) into the right thinking discipline. Not task tools — *methods*.
 
 > Built for thinking itself.
+>
+> **New here?** Read the tutorial first → [`TUTORIAL.md`](TUTORIAL.md) — follow one founder through 7 cognitive traps caught by 7 formations of protocols. Faster than 23 SKILL.md files.
 
 ![Fundemetal](docs/og-cover.png)
 
