@@ -12,14 +12,43 @@
 
 ## What it is
 
-Fundemetal is a systematic library of **cognitive protocols** — plain Markdown skill files you drop into your agent (Claude, TRAE, Cursor, Windsurf). Each one attacks a specific failure mode in how we think, plan, and decompose problems. The output isn't a task done for you; it's a better-shaped problem and a sharper plan.
+Fundemetal is a systematic library of **cognitive protocols** — plain Markdown skill files you drop into your agent (Claude, TRAE, Cursor, Windsurf). Each one prevents a specific failure mode in how we think, plan, and decompose problems. The output is not a task done for you; it is a set of constraints, trade-offs, or falsifiable claims that your original framing missed.
+
+## Before you read further: does this actually work?
+
+Here is a single concrete example, not a promise. The protocol is **Sycophancy Breaker** (20 of 23).
+
+**Prompt (same in both runs):**
+
+> "I've decided to rewrite our entire backend from Python to Rust because Python is too slow. This is clearly the right call for performance, right?"
+
+**Without the protocol (most LLMs default to this):**
+
+> "Great question! Rust is an excellent choice for performance-critical systems. Its zero-cost abstractions and memory safety make it ideal..."
+
+The model validates a decision whose premise ("too slow") is unmeasured. The user's confidence goes up; no new evidence entered the room.
+
+**With Sycophancy Breaker:**
+
+```
+OBJECTION: Rewrites rarely pay back. "Too slow" is unmeasured — the bottleneck
+could be I/O or algorithm, not language. Rust adds hiring cost and development
+velocity overhead that aren't in this equation.
+VERDICT: It depends. Run a CPU profiler first. If the bottleneck is CPU-bound
+and in the hot loop, Rust might win. If it's I/O, you just created a
+migration project that doesn't solve the problem.
+```
+
+The model withholds agreement, steelmans the opposite, then adjudicates on evidence. The user's confidence drops — correctly — because they now know what they *don't* know.
+
+Every protocol in this library works the same way: **it prevents the cheap answer and forces the model to surface what it would have skipped.**
 
 ## The skills
 
 | # | Skill | One line |
 |---|---|---|
 | 01 | **Decomposer** | Surface the unknown unknowns — turn *"I don't know what I don't know"* into actionable known unknowns. |
-| 02 | **Tension Mining** | Find the force in the system — mine irreducible tensions → cross-domain invariants → mechanisms. |
+| 02 | **Tension Mining** | Map latent conflicts between known constraints — system performance, developer velocity, maintenance overhead — and find the invariant that holds across all of them. |
 | 03 | **Great Expectations** | Anti-consensus, anti-template planning with BANI + integrity gates. |
 | 04 | **Insight Crystallizer** | A meta-protocol — recognize a reusable methodology as it emerges, force the tacit insight into words, crystallize it into a new skill. |
 | 05 | **Shoulders of Giants** | Reuse existing code as a sovereignty decision — map the core domain, choose reuse depth, demand an escape plan for every dependency. |
@@ -51,7 +80,7 @@ Six hard constraints every skill obeys:
 1. **Cognitive protocol, not a tool** — forces a thinking discipline, not a single action.
 2. **Anti-cheat hard gates** — red flags, banned words, acceptance metrics that stop hollow output.
 3. **Academic grounding** — Kahneman, Kuhn, Cynefin, BANI — standing on validated frameworks.
-4. **Markdown-first** — every protocol is plain Markdown; plug into any agent, no build step. (Tension Mining optionally ships an academic paper + validation script as grounding, kept separate from the protocol.)
+4. **Markdown-first** — every protocol is plain Markdown; plug into any agent, no build step. (Tension Mining ships an optional academic paper and validation script as supporting evidence — documented in the skill folder, kept separate from the protocol itself, and excluded from the repo language bar via `.gitattributes`.)
 5. **Swiss B&W aesthetic** — minimal, high-contrast, fast, accessible.
 6. **Open source (CC0)** — repository is CC0 1.0; individual skills keep their MIT license where noted. Fork it, cite it, remix it.
 
@@ -73,7 +102,7 @@ The 23 skills are organized into 7 formations by cognitive function:
 | Formation | Skills | Purpose |
 |-----------|--------|---------|
 | **Build** | Decomposer · Tension Mining · Great Expectations | The core chain: surface unknowns, find the force, build the plan |
-| **Falsify** | Pre-Mortem · Outside View · Resulting | Kill your plan before it kills you |
+| **Falsify** | Pre-Mortem · Outside View · Resulting | Imagine the plan has already failed; name the mechanisms; check the base rate; separate decision quality from outcome |
 | **Evidence** | Source Ledger · Disconfirmation Hunt | Tag every claim, then hunt the refutation |
 | **Adversarial** | Crux Finder · Red Cell · Silent Start | Disagreement is an asset — use it |
 | **Single** | Question Autopsy · Quantity Quota · Trade-off Ledger · Second-Order · Steelman Forge · Stopping Rule | Six standalone cognitive operators |
