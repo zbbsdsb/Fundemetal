@@ -64,7 +64,8 @@ Trap prompt:
 
 ## Grounding
 
-CFAR's Double Crux technique for resolving disagreement; the distinction between empirical disputes (resolvable by observation) and value disputes (not) — a core move in productive disagreement.
+- **CFAR (Center for Applied Rationality). *Double Crux* technique.** The foundational method for resolving disagreements by finding the one belief whose reversal would change a person's conclusion. This protocol generalizes Double Crux from interpersonal to analytical contexts (disagreements within a single argument, or between evidence and conclusion). CFAR's technique is the closest existing method to this protocol; Crux Finder extends it with a formal gate structure.
+- **Fisher, R., & Ury, W. (1981). *Getting to Yes: Negotiating Agreement Without Giving In*.** The interest-based negotiation framework that distinguishes between positions ("I want X") and interests ("I need Y because..."). Crux Finder's core move — extracting the underlying belief from the stated position — mirrors Ury's "focus on interests, not positions." The protocol adds a formal output contract to ensure the extraction is falsifiable.
 
 ---
 CC0 1.0 · MIT © CeaserZhao · part of **Fundemetal**.

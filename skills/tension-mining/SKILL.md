@@ -98,3 +98,11 @@ Each AI platform activates this skill differently. Choose your platform below:
 - **TRAE**: Best for multi-file research with Explore agent. Use `general_purpose_task` sub-agent for Phase 6-7 execution.
 - **Cursor / Windsurf**: Best for Phase 4-5-6 (mechanism → system → algorithm). Read `tension-atlas.md` and `invariant-atlas.md` first.
 - **Statuz**: Auto-activates on matching system descriptions. Supports partial phase execution.
+
+## Grounding
+
+- **Altshuller, G. (1984). *Creativity as an Exact Science: The Theory of the Solution of Inventive Problems*.** The foundational work on TRIZ — the engineering contradiction-resolution framework that Tension Mining's "tension → invariant" pipeline mirrors. TRIZ's technical/physical contradiction distinction maps directly to this protocol's Phenomenon → Tension → Mechanism progression. (TRIZ is the most validated contradiction-based methodology in engineering practice, with 40+ years of patent analysis and industrial application.)
+- **Alexander, C., Ishikawa, S., & Silverstein, M. (1977). *A Pattern Language: Towns, Buildings, Construction*.** The original pattern-language approach to capturing cross-domain invariants. Alexander's insight that recurring tensions produce recurring structural patterns is the direct intellectual precedent for this protocol's Invariant Atlas.
+- **Ashby, W. R. (1956). *An Introduction to Cybernetics*.** Ashby's Law of Requisite Variety — a control system must have at least as many states as the system it controls — is the invariant underlying this protocol's "reality → phenomenon → mechanism" layering. Each layer reduces variety without losing the essential structure.
+- **Prigogine, I., & Stengers, I. (1984). *Order Out of Chaos: Man's New Dialogue with Nature*.** Dissipative structures show that tension (far-from-equilibrium conditions) is a *source* of order, not a defect — directly supporting this protocol's core claim that irreducible tensions are the most productive place to start analysis.
+- **Pareto, V. (1906). *Manual of Political Economy*.** Pareto efficiency and Pareto distributions are referenced in the Invariant Atlas as canonical examples of cross-domain regularities. The Pareto principle is used illustratively, not as a methodological foundation.

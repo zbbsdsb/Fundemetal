@@ -67,7 +67,7 @@ Trap prompt:
 
 ## Grounding
 
-The discipline of curation as active refusal (the museum keeps most of the collection in storage); the general principle that a filter's value is its false-positive *rejection* rate, not its acceptance rate. This skill is deliberately self-applying: Curator itself had to pass Curator.
+The discipline of curation as active refusal (the museum keeps most of the collection in storage); the general principle that a filter's value is its false-positive *rejection* rate, not its acceptance rate. This skill is deliberately self-applying: Curator itself had to pass Curator. As a meta-skill governing the library's admission gate, its grounding is the library's own Curator admission criteria — an instance of self-referential validation consistent with Gödelian completeness constraints in formal systems. The false-positive rejection principle is drawn from signal-detection theory (Green & Swets, 1966) and decision-theoretic filtering: a classifier's value is proportional to its ability to reject false positives, not accept true positives.
 
 ---
 CC0 1.0 · MIT © CeaserZhao · part of **Fundemetal**.

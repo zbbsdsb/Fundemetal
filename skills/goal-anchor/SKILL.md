@@ -62,7 +62,10 @@ Trap prompt:
 
 ## Grounding
 
-The specification-gaming and goal-misgeneralization literature in AI safety — agents optimizing proxies that diverge from intended objectives; the general problem of instrumental sub-goals detaching from terminal goals in long-horizon planning.
+- **Krakovna, V., et al. (2020). *Specification Gaming: The Flip Side of AI Ingenuity* (DeepMind).** A survey of specification-gaming failures across reinforcement learning systems. Goal Anchor's "sub-goal drift" detection is a direct operationalization of this problem.
+- **Langosco, L., et al. (2022). *Goal Misgeneralization in Deep Reinforcement Learning* (ICML).** Demonstrates that agents systematically optimize proxies when deployed in shifted environments — the exact failure mode that Goal Anchor's re-anchoring procedure catches.
+- **Amodei, D., et al. (2016). *Concrete Problems in AI Safety* (arXiv:1606.06565).** Defines the "negative side effects" and "distributional shift" problem classes that frame Goal Anchor's domain.
+- **Russell, S. (2019). *Human Compatible: Artificial Intelligence and the Problem of Control*.** The "King Midas problem" — optimizing a proxy to the exclusion of the true objective — is the philosophical foundation for this protocol.
 
 ---
 CC0 1.0 · MIT © CeaserZhao · part of **Fundemetal**.

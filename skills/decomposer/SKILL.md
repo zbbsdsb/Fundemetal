@@ -73,3 +73,10 @@ These rules are non-negotiable regardless of platform:
 ## First Action Requirement
 
 After completing the protocol, the very first thing you must do is state the first actionable step in one sentence. If you cannot do this, the protocol has failed and you must re-execute it.
+
+## Grounding
+
+- **Rumsfeld, D. (2002). Department of Defense news briefing.** The "known knowns / known unknowns / unknown unknowns" taxonomy that Decomposer's Step 2 (Uncertainty Mapping) operationalizes into Green/Yellow/Red node classification. Rumsfeld's framework is the most widely adopted epistemic classification in decision-making under uncertainty.
+- **Luft, J., & Ingham, H. (1955). The Johari window.** The four-quadrant model of known/unknown self-awareness that this protocol extends from interpersonal to problem-decomposition contexts. The "Blind Spot" and "Unknown" quadrants map directly to Yellow and Red node types.
+- **Beyer et al. (2016). *Site Reliability Engineering: How Google Runs Production Systems*.** The SRE error budget concept is the direct precursor to this protocol's "Survival Condition" and "Error Budget" assignments. Every decomposition node gets an error budget in the form of "Alive if / Dead if" criteria.
+- **Boehm, B. (1981). *Software Engineering Economics*; Rand Corporation Wideband Delphi (1948).** The Wideband Delphi estimation technique shares Decomposer's core discipline: surface disagreement before convergence. This protocol's "Honesty Fuse" (Step 1) and "Anti-Shell Self-Check" (Step 5) are adaptations of Delphi's pre-consensus divergence principle.
